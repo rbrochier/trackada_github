@@ -23,4 +23,14 @@ track.projects.forEach ((project) => {
 });
 
 
-   
+track.projects.forEach((projet) => {
+
+const verifGit = join(homedir(), "ada-tech", "bloc1","projets", projet.name, ".git");
+
+if(existsSync(verifGit)) {
+    console.log(verifGit + "✅ Le Git est bien initialisé !") }
+else {
+    console.log(verifGit + "❌ Le Git n'est pas initialisé !")
+};
+})
+
