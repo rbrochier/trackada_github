@@ -17,10 +17,47 @@ console.log("❌ Le dossier ada n'est pas là !")
 const verifDossier = join(homedir(), "ada-tech", "bloc1","projets", track.projects[0].name);
 console.log(verifDossier);
 
+
+// chemin projets //
 track.projects.forEach ((project) => {
     const cheminProjets = join(homedir(), "ada-tech", "bloc1","projets", project.name);
      console.log(cheminProjets);
 });
 
 
-   
+// verif Git //
+
+track.projects.forEach((projet) => {
+
+const verifGit = join(homedir(), "ada-tech", "bloc1","projets", projet.name, ".git");
+
+if(existsSync(verifGit)) {
+    console.log(verifGit + "✅ Le Git est bien initialisé !") }
+else {
+    console.log(verifGit + "❌ Le Git n'est pas initialisé !")
+};
+})
+
+// verification des fichiers requis //
+
+track.projects.forEach ((projet) => {
+     projet.required.forEach((fichier) => {
+    const verifFichiers = join(homedir(), "ada-tech", "bloc1","projets", projet.name, fichier)
+if(existsSync(verifFichiers)) {
+    console.log(verifFichiers + "✅ Le fichier est bien là !") }
+else {
+    console.log(verifFichiers + "❌ Le fichier n'est pas là !")
+};
+     });
+
+
+});
+
+
+
+
+
+
+
+
+
