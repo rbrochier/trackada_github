@@ -2,6 +2,8 @@ import { readFileSync, existsSync } from "fs";
 import { join } from "path";
 import { homedir } from "os";
 import readline from "readline";
+import { styleText } from "util";
+
 
 // Fonction de vérification des dossiers //
 function lancerVerif() {
@@ -9,7 +11,7 @@ function lancerVerif() {
 
   const cheminProjets = join(homedir(), "ada-tech", "bloc1", "projets");
   if (existsSync(cheminProjets)) {
-    console.log("\n ✅ dossier ~/ada-tech/bloc1/projets");
+    console.log(styleText("green", "\n ✅ dossier ~/ada-tech/bloc1/projets"));
   } else {
     console.log("\n ❌ dossier ~/ada-tech/bloc1/projets");
     process.exit(1);
@@ -23,17 +25,17 @@ function lancerVerif() {
     const problemes = [];
 
     if (!existsSync(cheminProjet)) {
-      problemes.push(`le dossier n'existe pas ou n'est pas nommé correctement`);
+      problemes.push("le dossier n'existe pas ou n'est pas nommé correctement");
     }
 
     if (!existsSync(join(cheminProjet, ".git"))) {
-      problemes.push(`le repository git n'est pas initialisé`);
+      problemes.push("le repository git n'est pas initialisé");
     }
 
     if (problemes.length === 0) {
-      console.log(`\n ✅ dossier du projet ${projet.name}`);
+      console.log(styleText("green", `\n ✅ dossier du projet ${projet.name}`));
     } else {
-      console.log(`\n ❌ dossier du projet ${projet.name}`);
+      console.log(styleText("red", `\n ❌ dossier du projet ${projet.name}`));
       problemes.forEach((probleme) => {
         console.log(`- ${probleme}`);
       });
