@@ -13,8 +13,11 @@ function lancerVerif() {
     console.log("\n ✅ dossier ~/ada-tech/bloc1/projets");
   }
   else {
-    console.log("\n ❌ dossier ~/ada-tech/bloc1/projets")}
-
+    console.log("\n ❌ dossier ~/ada-tech/bloc1/projets");
+    process.exit(1);
+  };
+  
+  
 // Lecture du fichier track.json //
 
   const track = JSON.parse(readFileSync("track.json", "utf-8"));
