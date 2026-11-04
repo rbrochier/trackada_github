@@ -11,7 +11,6 @@ const rl = readline.createInterface({
 rl.question("Lancer la vérification ? (o/n) ", (reponse) => {
   if (reponse.trim().toLowerCase() === "o") {
     console.log("Vérification en cours...");
-    // lancer la vérification
 
     const track = JSON.parse(readFileSync("track.json", "utf-8"));
     console.log(track);
