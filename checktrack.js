@@ -5,12 +5,9 @@ import readline from "readline";
 
 // Fonction de vérification des dossiers //
 function lancerVerif() {
-
-
-
   // Vérification du dossier ~/ada-tech/bloc1/projets //
 
-  const cheminProjets = join(homedir(), "ada-tech", "bloc1", "projets",);
+  const cheminProjets = join(homedir(), "ada-tech", "bloc1", "projets");
   if (existsSync(cheminProjets)) {
     console.log("\n ✅ dossier ~/ada-tech/bloc1/projets");
   } else {
@@ -20,8 +17,8 @@ function lancerVerif() {
 
   // Lecture du fichier track.json //
 
-    const track = JSON.parse(readFileSync("track.json", "utf-8"));
-    track.projects.forEach((projet) => {
+  const track = JSON.parse(readFileSync("track.json", "utf-8"));
+  track.projects.forEach((projet) => {
     const cheminProjet = join(cheminProjets, projet.name);
     const problemes = [];
 
@@ -29,29 +26,20 @@ function lancerVerif() {
       problemes.push(`le dossier n'existe pas ou n'est pas nommé correctement`);
     }
 
-  if (!existsSync(join(cheminProjet, ".git"))) {
+    if (!existsSync(join(cheminProjet, ".git"))) {
       problemes.push(`le repository git n'est pas initialisé`);
     }
 
-
-
     if (problemes.length === 0) {
       console.log(`\n ✅ dossier du projet ${projet.name}`);
-    }
-    
-    
-    else {
+    } else {
       console.log(`\n ❌ dossier du projet ${projet.name}`);
       problemes.forEach((probleme) => {
         console.log(`- ${probleme}`);
       });
     }
-
   });
-
-  
 }
-
 
 // Interface de lecture pour la question //
 
