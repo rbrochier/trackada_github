@@ -4,9 +4,10 @@ import { homedir } from "os";
 import readline from "readline";
 import { styleText } from "util";
 
-
 // Fonction de vérification des dossiers //
-function lancerVerif() {
+function lancerVerif(nomProjet) {
+
+
   // Vérification du dossier ~/ada-tech/bloc1/projets //
 
   const cheminProjets = join(homedir(), "ada-tech", "bloc1", "projets");
@@ -16,14 +17,21 @@ function lancerVerif() {
     console.log("\n ❌ dossier ~/ada-tech/bloc1/projets");
     process.exit(1);
   }
-  
+
   const nomsDossiers = readdirSync(cheminProjets);
   let projetsComplets = 0;
 
   // Lecture du fichier track.json //
 
   const track = JSON.parse(readFileSync("track.json", "utf-8"));
-  track.projects.forEach((projet) => {
+  let projetAVerifier = track.projects;
+  if (nomProjet) {
+    projetAVerifier = track.projects.filter(
+      (projet) => projet.name === nomProjet,
+    );
+  }
+
+  projetAVerifier.forEach((projet) => {
     const cheminProjet = join(cheminProjets, projet.name);
     const problemes = [];
 
@@ -34,6 +42,9 @@ function lancerVerif() {
       if (!existsSync(join(cheminProjet, ".git"))) {
         problemes.push("le repository git n'est pas initialisé");
       }
+
+      /// verification des fichiers manquants ///
+
       const fichiersManquants = [];
       projet.required.forEach((file) => {
         if (!existsSync(join(cheminProjet, file))) {
@@ -45,8 +56,6 @@ function lancerVerif() {
         problemes.push(`Il manque : ${fichiersManquants.join(" et ")}`);
       }
     }
-    /// verification des fichiers requis ///
-
     /// verification des problèmes ///
 
     if (problemes.length === 0) {
@@ -61,21 +70,21 @@ function lancerVerif() {
   });
 
   const pourcentage = Math.round(
-    (projetsComplets / track.projects.length) * 100,
+    (projetsComplets / projetAVerifier.length) * 100,
   );
 
   if (pourcentage === 100) {
     console.log(
       styleText(
         "green",
-        `✅ ${pourcentage}% des projets sont initialisés correctement ${projetsComplets}/${track.projects.length}`,
+        `✅ ${pourcentage}% des projets sont initialisés correctement (${projetsComplets}/${projetAVerifier.length})`,
       ),
     );
   } else {
     console.log(
       styleText(
         "red",
-        `❌ ${pourcentage}% des projets sont initialisés correctement (${projetsComplets}/${track.projects.length})`,
+        `❌ ${pourcentage}% des projets sont initialisés correctement (${projetsComplets}/${projetAVerifier.length})`,
       ),
     );
   }
@@ -88,14 +97,24 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-// Question à l'utilisateur pour lancer la vérification //
-
-rl.question("Lancer la vérification ? (o/n) ", (reponse) => {
-  if (reponse.trim().toLowerCase() === "o") {
-    console.log("Vérification en cours...");
-    lancerVerif();
-  } else {
-    console.log("Annulé.");
-  }
-  rl.close();
-});
+rl.question(
+  "Veux tu vérifier tous les projets (t) ou un seul projet (p)  ? (t/p) ",
+  (reponse) => {
+    if (reponse.trim().toLowerCase() === "t") {
+      console.log("Vérification de tous les dossiers en cours...");
+      rl.close();
+      lancerVerif();
+    } else if (reponse.trim().toLowerCase() === "p") {
+      rl.question(
+        "Entrer le nom du dossier que vous voulez vérifier :",
+        (nom) => {
+          lancerVerif(nom.trim().toLowerCase());
+          rl.close();
+        },
+      );
+    } else {
+      console.log("Annulé.");
+      rl.close();
+    }
+  },
+);
