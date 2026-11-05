@@ -6,7 +6,6 @@ import { styleText } from "util";
 
 // Fonction de vérification des dossiers //
 function lancerVerif() {
-
   // Vérification du dossier ~/ada-tech/bloc1/projets //
 
   const cheminProjets = join(homedir(), "ada-tech", "bloc1", "projets");
@@ -17,47 +16,67 @@ function lancerVerif() {
     process.exit(1);
   }
 
+  let projetsComplets = 0;
+
   // Lecture du fichier track.json //
 
-    const track = JSON.parse(readFileSync("track.json", "utf-8"));
-    track.projects.forEach((projet) => {
+  const track = JSON.parse(readFileSync("track.json", "utf-8"));
+  track.projects.forEach((projet) => {
     const cheminProjet = join(cheminProjets, projet.name);
     const problemes = [];
 
     if (!existsSync(cheminProjet)) {
       problemes.push("le dossier n'existe pas ou n'est pas nommé correctement");
+    } else {
+      /// verification du Git ///
+      if (!existsSync(join(cheminProjet, ".git"))) {
+        problemes.push("le repository git n'est pas initialisé");
+      }
+      const fichiersManquants = [];
+      projet.required.forEach((file) => {
+        if (!existsSync(join(cheminProjet, file))) {
+          fichiersManquants.push(file);
+        }
+      });
+
+      if (fichiersManquants.length > 0) {
+        problemes.push(`Il manque : ${fichiersManquants.join(" et ")}`);
+      }
     }
-
-    /// verification du Git ///
-
-    if (!existsSync(join(cheminProjet, ".git"))) {
-      problemes.push("le repository git n'est pas initialisé");
-
-    }
- const fichiersManquants = [];
- 
     /// verification des fichiers requis ///
 
-    projet.required.forEach((file) => {
-      if (!existsSync(join(cheminProjet, file))) {
-        fichiersManquants.push(file);
-      }
-    });
-
-     if (fichiersManquants.length > 0){
-      problemes.push(`Il manque : ${fichiersManquants.join(" et ")}`);
-     }
     /// verification des problèmes ///
 
     if (problemes.length === 0) {
       console.log(styleText("green", `\n ✅ dossier du projet ${projet.name}`));
+      projetsComplets++;
     } else {
       console.log(styleText("red", `\n ❌ dossier du projet ${projet.name}`));
       problemes.forEach((probleme) => {
-      console.log(`- ${probleme}`);
+        console.log(`- ${probleme}`);
       });
     }
   });
+
+  const pourcentage = Math.round(
+    (projetsComplets / track.projects.length) * 100,
+  );
+
+  if (pourcentage === 100) {
+    console.log(
+      styleText(
+        "green",
+        `✅ ${pourcentage}% des projets sont initialisés correctement ${projetsComplets}/${track.projects.length}`,
+      ),
+    );
+  } else {
+    console.log(
+      styleText(
+        "red",
+        `❌ ${pourcentage}% des projets sont initialisés correctement (${projetsComplets}/${track.projects.length})`,
+      ),
+    );
+  }
 }
 
 // Interface de lecture pour la question //
