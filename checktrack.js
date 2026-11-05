@@ -1,8 +1,9 @@
-import { readFileSync, existsSync } from "fs";
+import { readFileSync, existsSync, readdirSync } from "fs";
 import { join } from "path";
 import { homedir } from "os";
 import readline from "readline";
 import { styleText } from "util";
+
 
 // Fonction de vérification des dossiers //
 function lancerVerif() {
@@ -15,7 +16,8 @@ function lancerVerif() {
     console.log("\n ❌ dossier ~/ada-tech/bloc1/projets");
     process.exit(1);
   }
-
+  
+  const nomsDossiers = readdirSync(cheminProjets);
   let projetsComplets = 0;
 
   // Lecture du fichier track.json //
@@ -25,7 +27,7 @@ function lancerVerif() {
     const cheminProjet = join(cheminProjets, projet.name);
     const problemes = [];
 
-    if (!existsSync(cheminProjet)) {
+    if (!nomsDossiers.includes(projet.name)) {
       problemes.push("le dossier n'existe pas ou n'est pas nommé correctement");
     } else {
       /// verification du Git ///
