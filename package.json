@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/rbrochier/trackada_github/issues"
   },
-  "homepage": "https://github.com/rbrochier/trackada_github#readme"
+  "homepage": "https://github.com/rbrochier/trackada_github#readme",
+  "devDependencies": {
+    "jest": "^30.5.2"
+  }
 }
